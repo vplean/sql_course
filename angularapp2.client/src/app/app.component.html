@@ -1,0 +1,125 @@
+<header class="site-header">
+  <div class="header-container">
+    <div class="logo">
+      <i class="fa-solid fa-bus"></i> Перевозки Межгород
+    </div>
+    <div class="header-right">
+      <div class="role-switcher" (click)="toggleRole()">
+        <i class="fa-solid fa-user"></i>
+        <span>Вход: {{ currentRole }}</span>
+      </div>
+    </div>
+  </div>
+</header>
+
+<div class="main-layout">
+  <aside class="sidebar">
+    <!-- Блок ссылок -->
+    <div class="sidebar-panel">
+      <h3 class="sidebar-title">Информационные ресурсы</h3>
+      <ul class="partner-list">
+        <li><a href="https://minsktrans.by" target="_blank" class="partner-link"><i class="fa-solid fa-globe"></i> Минсктранс</a></li>
+        <li><a href="https://ticketbus.by" target="_blank" class="partner-link"><i class="fa-solid fa-ticket"></i> Автовокзалы РБ</a></li>
+        <li><a href="https://bgs.by" target="_blank" class="partner-link"><i class="fa-solid fa-shield"></i> Белгосстрах (ОСГО)</a></li>
+      </ul>
+    </div>
+
+    <!-- Статистика для админа (спрятана через *ngIf, пока не войдет админ) -->
+    <div class="sidebar-panel" *ngIf="isAdmin">
+      <h3 class="sidebar-title">Статистика сайта</h3>
+      <div class="stats-item"><span>Активных рейсов:</span><strong style="color: var(--accent-blue)">24</strong></div>
+      <div class="stats-item"><span>Водителей в штате:</span><strong style="color: var(--accent-blue)">15</strong></div>
+    </div>
+  </aside>
+
+  <main class="content-area">
+    <!-- РЕГИСТРАЦИЯ -->
+    <section class="section-card">
+      <h2 class="section-title"><i class="fa-solid fa-address-card"></i> Зарегистрироваться в системе</h2>
+
+      <div class="registration-grid">
+        <div>
+          <label class="form-label">Доступные рейсы из базы данных:</label>
+          <!-- Выпадающий список. Заполняется сам из БД через *ngFor! -->
+          <select #routeSelect size="10" class="form-control">
+            <!-- Заглушка-подсказка, если рейсы еще не подгрузились или пропало соединение с C# -->
+            <option *ngIf="dbRoutes.length === 0" disabled>Загрузка рейсов из MySQL...</option>
+            <option *ngFor="let r of dbRoutes" [value]="r.id">{{ r.name }}</option>
+          </select>
+        </div>
+
+        <div style="background-color: #fdfdfd; padding: 20px; border: 1px solid var(--border-color); border-radius: 12px;">
+          <h4 style="font-size: 15px; font-weight: 700; margin-bottom: 15px; color: var(--accent-blue);">Форма регистрации</h4>
+
+          <div class="form-group">
+            <label class="form-label">Ваше Имя:</label>
+            <input #regFirst type="text" class="form-control" placeholder="Иван">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Ваша Фамилия:</label>
+            <input #regLast type="text" class="form-control" placeholder="Иванов">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Дата рождения:</label>
+            <input #regBirth type="date" class="form-control">
+          </div>
+
+          <!-- Кнопка передает значения полей в функцию TypeScript -->
+          <button class="btn btn-action" (click)="registerPassenger(routeSelect.value, regFirst.value, regLast.value, regBirth.value)" style="width: 100%; margin-top: 10px;">
+            Зарегистрироваться на рейс
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- БЛОК 2FA -->
+    <section class="section-card">
+      <h3 class="section-title" style="font-size: 17px; margin-bottom: 15px;"><i class="fa-solid fa-shield-halved"></i> Подтверждение 2FA</h3>
+      <div style="display: flex; gap: 15px; max-width: 400px;">
+        <input #tfaInput type="text" maxlength="6" class="form-control" placeholder="000000" style="text-align: center; letter-spacing: 5px; font-weight: bold;">
+        <button class="btn" (click)="confirm2FA(tfaInput.value)">Подтвердить</button>
+      </div>
+    </section>
+
+    <!-- АДМИНКА (ВИДНА ТОЛЬКО КОГДА isAdmin == true) -->
+    <section class="section-card" *ngIf="isAdmin">
+      <h2 class="section-title"><i class="fa-solid fa-database"></i> Редактор таблиц базы данных</h2>
+
+      <div class="table-actions">
+        <div style="flex: 1; min-width: 250px;">
+          <!-- ДИНАМИЧЕСКИЙ СПИСОК ВСЕХ ТАБЛИЦ ИЗ MySQL -->
+          <select #tableSelect (change)="loadSelectedTable(tableSelect.value)" class="form-control">
+            <option *ngFor="let t of dbTablesList" [value]="t">Таблица: {{ t }}</option>
+          </select>
+        </div>
+        <button class="btn" (click)="saveGridChanges()">
+          <i class="fa-solid fa-floppy-disk"></i> Сохранить
+        </button>
+      </div>
+
+      <!-- Сама таблица, которая динамически рисуется из базы данных -->
+      <div class="data-grid-wrapper" style="max-height: 400px; overflow-y: auto;">
+        <table class="data-grid">
+          <thead>
+            <tr>
+              <th *ngFor="let col of getObjectKeys(dbTableData[0])">{{ col }}</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let row of dbTableData">
+              <td *ngFor="let col of getObjectKeys(row)">
+                <!-- РЕДАКТИРУЕМЫЕ ЯЧЕЙКИ -->
+                <!-- Обработчик (input) обновляет объект в памяти при каждом нажатии клавиши -->
+                <input type="text" [value]="row[col]" (input)="updateCellValue(row, col, $event)" class="grid-input">
+              </td>
+            </tr>
+          </tbody>
+        </table>
+        <div *ngIf="dbTableData.length === 0" style="padding: 20px; text-align: center; color: gray;">
+          Таблица пуста, не существует в БД, или сервер C# не запущен.
+        </div>
+      </div>
+    </section>
+
+  </main>
+</div>

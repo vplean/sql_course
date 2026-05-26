@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Бронирование билетов | Перевозки Межгород</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+
+    <header class="site-header">
+        <div class="header-container">
+            <div class="logo">
+                <i class="fa-solid fa-bus"></i> Перевозки Межгород
+            </div>
+            
+            <div class="header-right">
+                <div class="header-contacts">
+                    <span>Контакты:</span>
+                    <div class="header-socials">
+                        <a href="https://vk.com" target="_blank" title="ВКонтакте"><i class="fa-brands fa-vk"></i></a>
+                        <a href="https://telegram.org" target="_blank" title="Telegram"><i class="fa-brands fa-telegram"></i></a>
+                        <a href="https://whatsapp.com" target="_blank" title="WhatsApp"><i class="fa-brands fa-whatsapp"></i></a>
+                    </div>
+                </div>
+
+                <div class="role-switcher" id="roleBtn" onclick="toggleRole()">
+                    <i class="fa-solid fa-user"></i>
+                    <span id="roleText">Вход: Пассажир</span>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <div class="main-layout">
+        
+        <aside class="sidebar">
+            <div class="sidebar-panel">
+                <h3 class="sidebar-title">Информационные ресурсы</h3>
+                <ul class="partner-list">
+                    <li><a href="https://minsktrans.by" target="_blank" class="partner-link"><i class="fa-solid fa-globe"></i> Минсктранс</a></li>
+                    <li><a href="https://ticketbus.by" target="_blank" class="partner-link"><i class="fa-solid fa-ticket"></i> Автовокзалы РБ</a></li>
+                    <li><a href="https://bgs.by" target="_blank" class="partner-link"><i class="fa-solid fa-shield"></i> Белгосстрах (ОСГО)</a></li>
+                    <li><a href="https://mintrans.gov.by" target="_blank" class="partner-link"><i class="fa-solid fa-landmark"></i> Минтранс РБ</a></li>
+                </ul>
+            </div>
+
+            <div class="sidebar-panel admin-only">
+                <h3 class="sidebar-title">Статистика сайта</h3>
+                <div class="stats-item">
+                    <span>Активных рейсов:</span>
+                    <strong style="color: var(--accent-blue)">24</strong>
+                </div>
+                <div class="stats-item">
+                    <span>Водителей в штате:</span>
+                    <strong style="color: var(--accent-blue)">15</strong>
+                </div>
+                <div class="stats-item">
+                    <span>Зарегистрировано:</span>
+                    <strong style="color: var(--accent-blue)">142 чел.</strong>
+                </div>
+            </div>
+        </aside>
+
+        <main class="content-area">
+            
+            <section class="section-card">
+                <h2 class="section-title">
+                    <i class="fa-solid fa-address-card"></i> Зарегистрироваться в системе
+                </h2>
+                
+                <div class="registration-grid">
+                    <div>
+                        <label class="form-label">Доступные рейсы (Рейс | Маршрут | Дата | Автобус | Цена):</label>
+                        <select id="routeListBox" size="10" class="form-control">
+                            <option value="1">[Рейс №1] Гродно — Минск | 22.05.2026 08:00 | Mercedes Sprinter | 25.00 BYN</option>
+                            <option value="2">[Рейс №2] Гродно — Брест | 22.05.2026 10:30 | VW Crafter | 30.00 BYN</option>
+                            <option value="3">[Рейс №3] Гродно — Витебск | 23.05.2026 07:15 | МАЗ-251 | 45.00 BYN</option>
+                            <option value="4">[Рейс №4] Гродно — Гомель | 23.05.2026 21:00 | Neoplan Tour | 50.00 BYN</option>
+                        </select>
+                        <p style="font-size: 12px; color: var(--text-muted); margin-top: 10px;">
+                            <i class="fa-solid fa-circle-info"></i> Выберите интересующий рейс в списке и заполните форму справа для бронирования билета.
+                        </p>
+                    </div>
+                    
+                    <div style="background-color: #fdfdfd; padding: 20px; border: 1px solid var(--border-color); border-radius: 12px;">
+                        <h4 style="font-size: 15px; font-weight: 700; margin-bottom: 15px; color: var(--accent-blue);">Форма регистрации</h4>
+                        
+                        <div class="form-group">
+                            <label class="form-label">Ваше Имя:</label>
+                            <input type="text" id="regFirst" class="form-control" placeholder="Иван">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Ваша Фамилия:</label>
+                            <input type="text" id="regLast" class="form-control" placeholder="Иванов">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Дата рождения:</label>
+                            <input type="date" id="regBirth" class="form-control">
+                        </div>
+                        
+                        <button class="btn btn-action" onclick="registerPassenger()" style="width: 100%; margin-top: 10px;">
+                            Зарегистрироваться на рейс
+                        </button>
+                    </div>
+                </div>
+            </section>
+
+            <section class="section-card">
+                <h3 class="section-title" style="font-size: 17px; margin-bottom: 15px;"><i class="fa-solid fa-shield-halved"></i> Подтверждение 2FA</h3>
+                <p style="font-size: 14px; color: var(--text-muted); margin-bottom: 15px;">
+                    После нажатия кнопки "Зарегистрироваться", система отправит вам 6-значный одноразовый секретный код. Введите его ниже для завершения.
+                </p>
+                <div style="display: flex; gap: 15px; max-width: 400px;">
+                    <input type="text" id="txt2FACode" maxlength="6" class="form-control" placeholder="000000" style="text-align: center; letter-spacing: 5px; font-weight: bold;">
+                    <button class="btn" onclick="confirm2FA()">Подтвердить</button>
+                </div>
+            </section>
+
+            <section class="section-card admin-only">
+                <h2 class="section-title">
+                    <i class="fa-solid fa-database"></i> Универсальный редактор таблиц базы данных
+                </h2>
+                
+                <div class="table-actions">
+                    <div style="flex: 1; min-width: 250px;">
+                        <select id="cmbTables" onchange="loadSelectedTable()" class="form-control">
+                            <option value="passengers">Таблица: Пассажиры (passengers)</option>
+                            <option value="drivers">Таблица: Водители (drivers)</option>
+                            <option value="corporate_logs">Журнал аудита (corporate_logs)</option>
+                        </select>
+                    </div>
+                    <button class="btn" onclick="saveGridChanges()">
+                        <i class="fa-solid fa-floppy-disk"></i> Сохранить
+                    </button>
+                    <button class="btn btn-danger" onclick="cancelSelectedTrip()">
+                        <i class="fa-solid fa-ban"></i> Отменить поездку
+                    </button>
+                </div>
+
+                <div class="data-grid-wrapper">
+                    <table class="data-grid" id="dataGridView">
+                        <thead>
+                            <tr id="gridHeader">
+                                <th>passenger_id</th>
+                                <th>first_name</th>
+                                <th>last_name</th>
+                                <th>stat</th>
+                                <th>tfa_code</th>
+                                <th>tfa_confirmed</th>
+                            </tr>
+                        </thead>
+                        <tbody id="gridBody">
+                            <tr>
+                                <td>1</td>
+                                <td><input type="text" value="Алеся" class="grid-input"></td>
+                                <td><input type="text" value="Ткаченко" class="grid-input"></td>
+                                <td><input type="text" value="active" class="grid-input"></td>
+                                <td>548962</td>
+                                <td>True</td>
+                            </tr>
+                            <tr>
+                                <td>2</td>
+                                <td><input type="text" value="Максим" class="grid-input"></td>
+                                <td><input type="text" value="Заяц" class="grid-input"></td>
+                                <td><input type="text" value="active" class="grid-input"></td>
+                                <td>235122</td>
+                                <td>False</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+            <section class="section-card admin-only">
+                <h3 class="section-title" style="font-size: 17px;"><i class="fa-solid fa-file-import"></i> Пакетный импорт данных</h3>
+                <div style="display: flex; align-items: center; justify-content: space-between; gap: 20px; flex-wrap: wrap;">
+                    <p style="font-size: 13px; color: var(--text-muted); flex: 1;">
+                        Загрузка водителей из внешнего файла CSV/TXT. Требуемый формат заголовка: <strong>first_name,last_name,birthday</strong>.
+                    </p>
+                    <label class="btn btn-secondary">
+                        <i class="fa-solid fa-upload"></i> Загрузить файл
+                        <input type="file" id="fileImport" style="display: none;" onchange="importDrivers(event)">
+                    </label>
+                </div>
+            </section>
+
+        </main>
+    </div>
+    <footer class="site-footer">
+        <div class="footer-container">
+            <div style="font-size: 13px; color: var(--text-muted);">
+                <p><strong>© 2026 Перевозки Межгород.</strong> Все права защищены.</p>
+                <p style="margin-top: 5px;">Разработал: Карпович Б.А. (ТЛ-232)</p>
+            </div>
+            <div style="font-size: 12px; color: var(--text-muted); text-align: right;">
+                <p>Панель управления диспетчера</p>
+                <p style="margin-top: 3px;">Статус подключения к MySQL: <span style="color: #27ae60; font-weight: bold;">Стабильно</span></p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        async function checkDatabaseConnection() {
+            try {
+            let response = await fetch('/api/db/status');
+            let data = await response.json();
+            console.log(data.text);
+            alert("Ответ от сервера: " + data.text);
+        } catch (error) {
+            console.error("Ошибка при запросе:", error);
+            alert("Не удалось связаться с сервером");
+        }
+        }
+        // Функция для загрузки данных в ListBox
+        async function loadRoutes() {
+            const response = await fetch('/api/travel/routes');
+            const data = await response.json();
+
+            const listBox = document.getElementById('routeListBox');
+            listBox.innerHTML = ''; // Очищаем старые данные
+
+            data.forEach(item => {
+                let opt = document.createElement('option');
+                opt.textContent = item;
+                listBox.appendChild(opt);
+            });
+        }
+
+        // Вызываем загрузку при старте
+        window.onload = loadRoutes;
+
+        // Функция отправки регистрации
+        async function registerPassenger() {
+            const data = {
+                firstName: document.getElementById('regFirst').value,
+                lastName: document.getElementById('regLast').value
+            };
+
+            const response = await fetch('/api/travel/register', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(data)
+            });
+
+            if (response.ok) alert("Вы успешно зарегистрированы!");
+        }
+    </script>
+
+
+</body>
+</html>
